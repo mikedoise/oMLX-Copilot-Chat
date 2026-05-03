@@ -1,0 +1,116 @@
+{
+  "name": "omlx-copilot-chat",
+  "displayName": "oMLX Copilot Chat",
+  "description": "Use oMLX OpenAI-compatible models from the VS Code Copilot Chat model picker.",
+  "version": "0.0.8",
+  "publisher": "techopolis",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "categories": [
+    "AI",
+    "Chat"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:omlx.manage",
+    "onCommand:omlx.setApiToken",
+    "onCommand:omlx.clearApiToken",
+    "onCommand:omlx.testConnection",
+    "onCommand:omlx.refreshModels"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languageModelChatProviders": [
+      {
+        "vendor": "omlx",
+        "displayName": "oMLX",
+        "managementCommand": "omlx.manage"
+      }
+    ],
+    "commands": [
+      {
+        "command": "omlx.manage",
+        "title": "Manage oMLX Provider",
+        "category": "oMLX"
+      },
+      {
+        "command": "omlx.setApiToken",
+        "title": "Set API Token",
+        "category": "oMLX"
+      },
+      {
+        "command": "omlx.clearApiToken",
+        "title": "Clear API Token",
+        "category": "oMLX"
+      },
+      {
+        "command": "omlx.testConnection",
+        "title": "Test Connection",
+        "category": "oMLX"
+      },
+      {
+        "command": "omlx.refreshModels",
+        "title": "Refresh Models",
+        "category": "oMLX"
+      }
+    ],
+    "configuration": {
+      "title": "oMLX",
+      "properties": {
+        "omlx.baseUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:8000/v1",
+          "description": "Base URL for the oMLX OpenAI-compatible API."
+        },
+        "omlx.maxInputTokensOverride": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Optional override for the input token limit advertised for every oMLX model. Set to 0 to auto-detect from model metadata. For Copilot Agent mode, use 65536 or higher if oMLX is configured for that context size."
+        },
+        "omlx.maxOutputTokensOverride": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Optional override for the output token limit advertised for every oMLX model. Set to 0 to use model metadata when available."
+        },
+        "omlx.requestTimeoutMs": {
+          "type": "number",
+          "default": 300000,
+          "minimum": 1000,
+          "description": "HTTP timeout, in milliseconds, for oMLX model and chat requests."
+        },
+        "omlx.enableImageInput": {
+          "type": "boolean",
+          "default": false,
+          "description": "Advertise image input support for oMLX models. Enable only for models that accept OpenAI-compatible image_url message parts."
+        },
+        "omlx.enableToolCalling": {
+          "type": "boolean",
+          "default": true,
+          "description": "Advertise and forward OpenAI-compatible tool calls for oMLX models. Disable if your selected oMLX model/server rejects tool schemas."
+        },
+        "omlx.maxToolCount": {
+          "type": "number",
+          "default": 16,
+          "minimum": 1,
+          "description": "Maximum number of tools to advertise for oMLX Agent mode requests. Lower this if tool schemas are pushing prompts over the model context window."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.104.0",
+    "@vscode/vsce": "^3.6.0",
+    "typescript": "^5.9.0"
+  }
+}
