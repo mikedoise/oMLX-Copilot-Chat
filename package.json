@@ -5,6 +5,14 @@
   "version": "0.0.8",
   "publisher": "techopolis",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikedoise/oMLX-Copilot-Chat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mikedoise/oMLX-Copilot-Chat/issues"
+  },
+  "homepage": "https://github.com/mikedoise/oMLX-Copilot-Chat#readme",
   "engines": {
     "vscode": "^1.104.0"
   },
