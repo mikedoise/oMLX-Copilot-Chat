@@ -2,8 +2,9 @@
   "name": "omlx-copilot-chat",
   "displayName": "oMLX Copilot Chat",
   "description": "Use oMLX OpenAI-compatible models from the VS Code Copilot Chat model picker.",
-  "version": "0.0.8",
+  "version": "0.1.2",
   "publisher": "techopolis",
+  "preview": true,
   "license": "MIT",
   "repository": {
     "type": "git",

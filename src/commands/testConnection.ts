@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { OmlxConfiguration } from '../config/OmlxConfiguration';
-import { OmlxClient } from '../provider/OmlxClient';
+import { OmlxAuthenticationError, OmlxClient } from '../provider/OmlxClient';
 import { OmlxLanguageModelProvider } from '../provider/OmlxLanguageModelProvider';
 
 export function registerConnectionCommands(
@@ -40,6 +40,20 @@ export function registerConnectionCommands(
       } catch (error) {
         const message = formatError(error);
         output.appendLine(`oMLX connection test failed: ${message}`);
+        if (error instanceof OmlxAuthenticationError) {
+          const selection = await vscode.window.showErrorMessage(
+            message,
+            'Set Token',
+            'Clear Token'
+          );
+          if (selection === 'Set Token') {
+            await vscode.commands.executeCommand('omlx.setApiToken');
+          } else if (selection === 'Clear Token') {
+            await vscode.commands.executeCommand('omlx.clearApiToken');
+          }
+          return;
+        }
+
         void vscode.window.showErrorMessage(`oMLX connection test failed: ${message}`);
       } finally {
         cancellation.dispose();

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { OmlxConfiguration } from '../config/OmlxConfiguration';
-import { OmlxClient, OmlxMemoryError, OmlxPromptTooLongError } from './OmlxClient';
+import { OmlxAuthenticationError, OmlxClient, OmlxMemoryError, OmlxPromptTooLongError } from './OmlxClient';
 import { convertMessages, estimateTokenCount } from './messageConversion';
 import { metadataForModelWithObservedLimit } from './modelMetadata';
 import { OpenAIModel, OpenAITool } from './openAICompatTypes';
@@ -45,7 +45,12 @@ export class OmlxLanguageModelProvider implements vscode.LanguageModelChatProvid
     } catch (error) {
       this.output.appendLine(`Failed to fetch oMLX models: ${formatError(error)}`);
       if (!options.silent) {
-        void vscode.window.showErrorMessage(`Failed to fetch oMLX models: ${formatError(error)}`);
+        if (error instanceof OmlxAuthenticationError) {
+          void vscode.window.showErrorMessage(formatError(error), 'Set Token')
+            .then(selection => selection === 'Set Token' ? vscode.commands.executeCommand('omlx.setApiToken') : undefined);
+        } else {
+          void vscode.window.showErrorMessage(`Failed to fetch oMLX models: ${formatError(error)}`);
+        }
       }
       return [];
     }
@@ -91,6 +96,10 @@ export class OmlxLanguageModelProvider implements vscode.LanguageModelChatProvid
       }
       if (error instanceof OmlxMemoryError) {
         this.output.appendLine(`Memory error for ${model.id}: ${error.body}`);
+        throw new Error(error.message);
+      }
+      if (error instanceof OmlxAuthenticationError) {
+        this.output.appendLine(`Authentication error for ${model.id}: ${error.body}`);
         throw new Error(error.message);
       }
       throw error;

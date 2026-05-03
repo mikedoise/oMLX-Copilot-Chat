@@ -24,10 +24,14 @@ The default endpoint is `http://127.0.0.1:8000/v1`.
 1. Start oMLX.
 2. Generate an API token in the oMLX admin panel.
 3. Run `oMLX: Set API Token` from the Command Palette.
-4. Run `oMLX: Test Connection`.
-5. Open Copilot Chat, manage language models, and enable the oMLX models you want to use.
+4. Wait for the token validation message. If validation fails, paste the exact token from oMLX again.
+5. Run `oMLX: Test Connection` if you want to retest later.
+6. Open Copilot Chat, manage language models, and enable the oMLX models you want to use.
 
 The token is stored in VS Code Secret Storage, not in `settings.json`.
+`oMLX: Set API Token` only changes the token VS Code sends to oMLX; it does not
+create or rotate a token in oMLX. The value must exactly match a token generated
+in the oMLX admin panel.
 
 ## Copilot Agent Context
 

@@ -33,6 +33,13 @@ export class OmlxMemoryError extends Error {
   }
 }
 
+export class OmlxAuthenticationError extends Error {
+  constructor(readonly body: string) {
+    super('The stored oMLX API token is invalid. Generate a fresh token in the oMLX admin panel, then run "oMLX: Set API Token" in VS Code.');
+    this.name = 'OmlxAuthenticationError';
+  }
+}
+
 export class OmlxClient {
   constructor(
     private readonly baseUrl: string,
@@ -156,6 +163,9 @@ export class OmlxClient {
 
       if (!response.ok) {
         const body = await response.text();
+        if (isAuthenticationError(response.status, body)) {
+          throw new OmlxAuthenticationError(body);
+        }
         const promptTooLong = parsePromptTooLongError(body);
         if (promptTooLong) {
           throw new OmlxPromptTooLongError(promptTooLong.promptTokens, promptTooLong.maxContextTokens, body);
@@ -283,6 +293,15 @@ function errorMessageFromBody(body: string): string {
 function isMemoryError(body: string): boolean {
   const message = errorMessageFromBody(body);
   return /Cannot free enough memory|Need .*GB|all loaded models are pinned/i.test(message);
+}
+
+function isAuthenticationError(status: number, body: string): boolean {
+  if (status === 401 || status === 403) {
+    return true;
+  }
+
+  const message = errorMessageFromBody(body);
+  return /invalid api key|unauthorized|forbidden|authentication/i.test(message);
 }
 
 function formatHttpError(status: number, body: string): string {
